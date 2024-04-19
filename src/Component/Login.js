@@ -31,7 +31,7 @@ function Login() {
             const userData = await userCredential.json();
             console.log('User logged in:', userData);
             dispatch(loginSuccess({token: userData.idToken, user: userData.email}));
-            navigate('/welcome');
+            navigate('/compose');
             setValues({
                 email:'',
                 pass: '',
