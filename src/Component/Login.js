@@ -17,7 +17,7 @@ function Login() {
         e.preventDefault();
 
         try {
-            const userCredential = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCRLO00hJ5etUWEEIWrl2co5zDEvbP7CQ4',
+            const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCRLO00hJ5etUWEEIWrl2co5zDEvbP7CQ4',
         {
             method: 'POST',
             body: JSON.stringify({
@@ -27,17 +27,18 @@ function Login() {
             }),
             headers: {'Content-Type': 'application/json'},
         });
-        if(userCredential.ok) {
-            const userData = await userCredential.json();
+        if(response.ok) {
+            const userData = await response.json();
             console.log('User logged in:', userData);
-            dispatch(loginSuccess({token: userData.idToken, user: userData.email}));
+            const userId = userData.email.replace(/[^a-zA-Z0-9]/g, "");
+            dispatch(loginSuccess({token: userData.idToken, user: userId}));
             navigate('/compose');
             setValues({
                 email:'',
                 pass: '',
             });
         }else {
-            const errorData = await userCredential.json();
+            const errorData = await response.json();
             console.log('Error logging in:', errorData);
             alert('Incorrect email or password. Please try again.');
         }

@@ -3,17 +3,28 @@ import { createSlice } from "@reduxjs/toolkit";
 export const emailSlice = createSlice({
     name: 'email',
     initialState: {
-        sentEmails: [],
+        sendMail: [],
+        receivedMail: []
     },
     reducers: {
-        sendEmail: (state, action)=>{
-            state.sentEmails.push(action.payload);
+        addSendMail: (state, action)=>{
+            state.sendMail.push(action.payload);
         },
+        setSendMail: (state, action) =>{
+            state.sendMail = action.payload;
+        },
+        addReceivedMail: (state, action)=>{
+            state.receivedMail.push(action.payload);
+        },
+        setReceivedMail: (state, action)=>{
+            state.receivedMail = action.payload;
+        }
     },
 });
 
-export const {sendEmail} = emailSlice.actions;
+export const { addSendMail, setSendMail, addReceivedMail, setReceivedMail} = emailSlice.actions;
 
-export const selectSentEmails = (state)=> state.email.sentEmails;
+export const selectSendMail = (state)=> state.email.sendMail;
+export const selectReceivedMail = state => state.email.receivedMail;
 
 export default emailSlice.reducer;
