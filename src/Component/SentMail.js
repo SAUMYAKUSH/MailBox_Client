@@ -5,6 +5,7 @@ import "./Inbox.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setSendMail } from "../Slice/emailSlice";
 import { selectUser } from "../Slice/authSlice";
+import useFetchEmails from "./Hooks/UserFetch";
 
 
 const SentMail = () => {
@@ -15,33 +16,12 @@ const SentMail = () => {
     const dispatch = useDispatch(); 
     const navigate = useNavigate();
 
-
+    useFetchEmails(
+        userId,
+        `https://mailboxclient-a9282-default-rtdb.firebaseio.com/mail/${userId}/Send.json`,
+        setSendMail
+    );
    
-
-
-    useEffect(() => {
-        const fetchEmails = async () => {
-            try {
-                const response = await axios.get(`https://mailboxclient-a9282-default-rtdb.firebaseio.com/mail/${userId}/Send.json`);
-
-                if(response.status===200){
-                    const data= response.data;
-                    if(data){
-                const data = response.data;
-                    const emailsArray = Object.entries(data).map(([id, email]) => ({ id, ...email }));
-                    dispatch(setSendMail(emailsArray));
-
-                }
-            }
-
-            } catch (error) {
-                console.error("Error fetching emails:", error);
-            }
-        };
-
-        fetchEmails();
-
-    }, [dispatch,userId]);
 
 
     const composeHandler = () => {
