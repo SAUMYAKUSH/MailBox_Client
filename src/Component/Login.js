@@ -31,6 +31,7 @@ function Login() {
             const userData = await response.json();
             console.log('User logged in:', userData);
             const userId = userData.email.replace(/[^a-zA-Z0-9]/g, "");
+            console.log(userId, userData.idToken);
             dispatch(loginSuccess({token: userData.idToken, user: userId}));
             navigate('/compose');
             setValues({

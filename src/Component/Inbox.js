@@ -5,6 +5,7 @@ import "./Inbox.css";
 import { useDispatch, useSelector } from "react-redux";
 import { selectReceivedMail, setReceivedMail } from "../Slice/emailSlice";
 import { selectUser } from "../Slice/authSlice";
+import { logout } from "../Slice/authSlice";
 
 const Inbox = () => {
     const userId = useSelector(selectUser)
@@ -26,6 +27,8 @@ const Inbox = () => {
                         const emailsArray = Object.entries(data).map(([id, email]) => ({ id, ...email }));
                         console.log("Emails Array:", emailsArray); // Log the emailsArray to see its contents
                         dispatch(setReceivedMail(emailsArray));
+                        const unread = receivedMail.filter(email=> !email.read);
+                        setUnreadCount(unread.length);
                     } else {
                         console.error("No emails found.");
                     }
@@ -43,6 +46,49 @@ const Inbox = () => {
     const composeHandler = () => {
         navigate('/compose');
     };
+    const markAsRead = async (id)=>{
+        try {
+            await axios.patch(`https://mailboxclient-a9282-default-rtdb.firebaseio.com/mail/${userId}/Receive/${id}.json`, {read: true});
+            const updatedEmails = receivedMail.map(email=>{
+                if(email.id === id){
+                    return {...email, read:true};
+                }
+                return email;
+            });
+            dispatch(setReceivedMail(updatedEmails));
+            setUnreadCount(prevCount => Math.max(0, prevCount - 1));
+        } catch(error) {
+            console.error("Error marking email as read:", error);
+        }
+    };
+
+    const handleRecipientClick = (email) => {
+        setSelectedEmail(prevSelectedEmail => {
+            return prevSelectedEmail === email ? null : email;
+        });
+    };
+  
+    const deleteEmail = async (event, id) => {
+        event.stopPropagation()
+        try {
+            await axios.delete(`https://mailboxclient-a9282-default-rtdb.firebaseio.com/mail/${userId}/Receive/${id}.json`);
+  
+  
+            dispatch(setReceivedMail(receivedMail.filter(email => email.id !== id)));
+            if (selectedEmail && selectedEmail.id === id) {
+                setSelectedEmail(null);
+            }
+        } catch (error) {
+            console.error("Error deleting email:", error);
+        }
+    };
+  
+    const LogOutHandler = () => {
+        dispatch(logout());
+        navigate('/')
+    }
+
+
 
     return (
         <div className="container mt-4">
