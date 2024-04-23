@@ -5,6 +5,7 @@ import Login from './Component/Login';
 import Password from './Component/Password';
 import ComposeEmail from './Component/ComposeEmail';
 import Inbox from './Component/Inbox';
+import SentMail from "./Component/SentMail";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path='password' element={<Password/>}></Route>
         <Route path='/compose' element={<ComposeEmail/>}></Route>
         <Route path='/inbox' element={<Inbox/>}/>
+        <Route path='/sent' element={<SentMail/>}/>
       </Routes>
     </Router>
   )
