@@ -27,7 +27,7 @@ function SignUpForm() {
           password: values.pass,
           returnSecureToken: true,
         }),
-        headers: {'Contenr-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json' },
       }
     ).then((response) => response.json());
 

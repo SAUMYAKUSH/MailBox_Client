@@ -34,6 +34,7 @@ function ComposeEmail() {
       content: content,
       timestamp: Date.now(),
       sender: senderEmail,
+      messageRead: false,
     };
 
 

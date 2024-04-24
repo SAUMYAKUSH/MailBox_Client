@@ -18,7 +18,7 @@ const Inbox = () => {
 
     useFetchEmails(
         userId,
-        `https://react-https-45286-default-rtdb.firebaseio.com/mail/${userId}/Receive.json`,
+        `https:/mailboxclient-a9282-default-rtdb.firebaseio.com/mail/${userId}/Receive.json`,
         setReceivedMail
     )
   
@@ -31,11 +31,14 @@ const Inbox = () => {
         navigate('/compose');
     };
     const markAsRead = async (id)=>{
+        let email = userId;
+        let updated = email.replace(/[@.]/g, "");
+        console.log(updated);
         try {
-            await axios.patch(`https://mailboxclient-a9282-default-rtdb.firebaseio.com/mail/${userId}/Receive/${id}.json`, {read: true});
+            await axios.put(`https://mailboxclient-a9282-default-rtdb.firebaseio.com/mail/${updated}/Receive/${id}.json`, {messageRead: true});
             const updatedEmails = receivedMail.map(email=>{
                 if(email.id === id){
-                    return {...email, read:true};
+                    return {...email, messageRead:true};
                 }
                 return email;
             });
@@ -82,7 +85,7 @@ const Inbox = () => {
                         <Link className="list-group-item list-group-item-action active" to='/inbox'>
                             Inbox ({unreadCount} unread)
                         </Link>
-                        <Link className="list-group-item list-group-item-action" to='/'>Sent </Link>
+                        <Link className="list-group-item list-group-item-action" to='/sent'>Sent </Link>
                         <p className="list-group-item list-group-item-action">Drafts</p>
                         <p className="list-group-item list-group-item-action">Trash</p>
                     </div>
@@ -110,6 +113,7 @@ const Inbox = () => {
                                                 <p className="mb-1">{email.subject} </p>
                                             </div>
                                         </div>
+                                        <button  onClick={()=>markAsRead(email.id)}>Read</button>
                                     </div>
                                 ))}
                             </div>
