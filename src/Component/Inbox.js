@@ -18,33 +18,36 @@ const Inbox = () => {
 
     useFetchEmails(
         userId,
-        `https:/mailboxclient-a9282-default-rtdb.firebaseio.com/mail/${userId}/Receive.json`,
+        `https://mailboxclient-a9282-default-rtdb.firebaseio.com/mail/${userId}/Receive.json`,
         setReceivedMail
     )
   
     useEffect(() => {
-      const unread = receivedMail.filter(email => !email.read);
+      const unread = receivedMail.filter(email => !email.messageRead);
       setUnreadCount(unread.length);
   }, [receivedMail]);
 
     const composeHandler = () => {
         navigate('/compose');
     };
-    const markAsRead = async (id)=>{
+    const markAsRead = async (id) => {
         let email = userId;
         let updated = email.replace(/[@.]/g, "");
         console.log(updated);
         try {
-            await axios.put(`https://mailboxclient-a9282-default-rtdb.firebaseio.com/mail/${updated}/Receive/${id}.json`, {messageRead: true});
-            const updatedEmails = receivedMail.map(email=>{
-                if(email.id === id){
-                    return {...email, messageRead:true};
+            await axios.patch(`https://mailboxclient-a9282-default-rtdb.firebaseio.com/mail/${updated}/Receive/${id}.json`, { messageRead: true });
+            
+            const updatedEmails = receivedMail.map(email => {
+                if (email.id === id) {
+                    return { ...email, messageRead: true };
                 }
                 return email;
             });
+            
             dispatch(setReceivedMail(updatedEmails));
+            
             setUnreadCount(prevCount => Math.max(0, prevCount - 1));
-        } catch(error) {
+        } catch (error) {
             console.error("Error marking email as read:", error);
         }
     };
@@ -78,6 +81,7 @@ const Inbox = () => {
 
 
     return (
+        <>
         <div className="container mt-4">
             <div className="row">
                 <div className="col-md-3">
@@ -105,8 +109,8 @@ const Inbox = () => {
                         {!selectedEmail && (
                             <div className="list-group">
                                 {receivedMail.map((email, index) => (
-                                    <div key={index} className={`list-group-item list-group-item-action ${email.read ? '' : 'unread'}`} onClick={() => setSelectedEmail(email)}>
-                                        <span className="dot"></span>
+                                    <div key={index} className={"list-group-item list-group-item-action ${email.messageReadead ? '' : 'unread'}"} onClick={() => setSelectedEmail(email)}>
+                                        {!email.messageRead && <span className="dot"></span>}
                                         <div className="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <h6 className="mb-1">{email.sender}</h6>
@@ -125,7 +129,8 @@ const Inbox = () => {
                 <img src='https://i.pinimg.com/736x/f4/b9/3a/f4b93a502f60397fe92b663ddb9e683d.jpg' className="img-fluid rounded-circle" alt="Profile" />
             </button>
         </div>
+        </>
     );
 };
 
-export default Inbox;
+export default Inbox;
